@@ -1,0 +1,44 @@
+.page {
+	background-color: #f4f4f4;
+	height: 100%;
+}
+
+.bg-light {
+	background-color: #f5f5f4 !important;
+}
+
+/* 背景主色调 */
+.bg-main {
+	background-color: #009cff !important;
+}
+
+.bg-main-hover {
+	background-color: #51bbff !important;
+}
+
+.bg-main-disable {
+	background-color: #51bbff !important;
+}
+
+/* 文字主色调 */
+.text-main {
+	color: #009cff !important;
+}
+
+.text-main-hover {
+	color: #51bbff !important;
+}
+
+.border-main {
+	border-color: #51bbff !important;
+}
+
+/*  */
+.line-h {
+	line-height: 1.2 !important;
+}
+
+.f-divider {
+	height: 20rpx;
+	background-color: f5f5f4;
+}

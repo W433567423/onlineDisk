@@ -1,0 +1,35 @@
+{
+	"name": "onlinedisk",
+	"version": "1.0.0",
+	"description": "",
+	"main": "main.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"prepare": "husky install",
+		"lint": "eslint --fix --ext .js,.vue ./src"
+
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"husky": "^8.0.3"
+	},
+	"devDependencies": {
+		"@commitlint/cli": "^17.4.4",
+		"@commitlint/config-conventional": "^17.4.4",
+		"@vue/eslint-config-airbnb": "^7.0.0",
+		"babel-eslint": "^10.1.0",
+		"eslint": "^8.35.0",
+		"eslint-plugin-import": "^2.27.5",
+		"eslint-plugin-vue": "^9.9.0",
+		"husky": "^8.0.0",
+		"lint-staged": "^13.1.2"
+	},
+	"lint-staged": {
+		"*.{js,vue}": [
+			"npm run lint",
+			"git add"
+		]
+	}
+}
