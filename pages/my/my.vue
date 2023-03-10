@@ -1,5 +1,5 @@
 <template>
-  <view class="newtab"> newtab </view>
+	<view class="my">my</view>
 </template>
 
 <script setup lang="ts"></script>

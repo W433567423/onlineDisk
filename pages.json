@@ -18,7 +18,6 @@
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			}
-
 		}
 	],
 	"globalStyle": {
@@ -38,12 +37,12 @@
 			"selectedIconPath": "static/tabbar/index-selected.png"
 		}, {
 			"text": "传输",
-			"pagePath": "pages/index/index",
+			"pagePath": "pages/list/list",
 			"iconPath": "static/tabbar/list.png",
 			"selectedIconPath": "static/tabbar/list-selected.png"
 		}, {
 			"text": "我的",
-			"pagePath": "pages/index/index",
+			"pagePath": "pages/my/my",
 			"iconPath": "static/tabbar/my.png",
 			"selectedIconPath": "static/tabbar/my-selected.png"
 		}]
