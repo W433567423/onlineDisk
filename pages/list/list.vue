@@ -1,5 +1,8 @@
 <template>
-	<view class="list">list</view>
+	<view class="list">
+		<uniStatusBar></uniStatusBar>
+		list
+	</view>
 </template>
 
 <script setup lang="ts"></script>

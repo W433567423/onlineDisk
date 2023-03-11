@@ -1,10 +1,12 @@
 import App from './App'
+import uniStatusBar from '@/components/uniStatusBar'
+import navBar from '@/components/navBar'
+import fileList from '@/components/fileList'
 
 // #ifndef VUE3
 import Vue from 'vue'
 Vue.config.productionTip = false
 App.mpType = 'app'
-
 try {
 	function isPromise(obj) {
 		return (
@@ -36,7 +38,7 @@ try {
 const app = new Vue({
 	...App
 })
-app.$mount()
+
 // #endif
 
 // #ifdef VUE3
@@ -45,6 +47,10 @@ import {
 } from 'vue'
 export function createApp() {
 	const app = createSSRApp(App)
+	//全局组件
+	app.component('uniStatusBar', uniStatusBar)
+	app.component('navBar', navBar)
+	app.component('fileList', fileList)
 	return {
 		app
 	}

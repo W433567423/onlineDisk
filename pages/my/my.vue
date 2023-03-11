@@ -1,5 +1,8 @@
 <template>
-	<view class="my">my</view>
+	<view class="my">
+		<uniStatusBar></uniStatusBar>
+		my
+	</view>
 </template>
 
 <script setup lang="ts"></script>
