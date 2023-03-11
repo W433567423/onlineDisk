@@ -2,6 +2,7 @@ import App from './App'
 import uniStatusBar from '@/components/uniStatusBar'
 import navBar from '@/components/navBar'
 import fileList from '@/components/fileList'
+import fDialog from '@/components/fDialog'
 
 // #ifndef VUE3
 import Vue from 'vue'
@@ -51,6 +52,7 @@ export function createApp() {
 	app.component('uniStatusBar', uniStatusBar)
 	app.component('navBar', navBar)
 	app.component('fileList', fileList)
+	app.component('fDialog', fDialog)
 	return {
 		app
 	}

@@ -8,3 +8,7 @@ export interface IselectE {
 	index: number
 	value: boolean
 }
+export interface IactionItem {
+	text: string
+	icon: string
+}
