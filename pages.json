@@ -24,7 +24,9 @@
 		},
 		{
 			"path": "pages/my/my",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "个人中心"
+			}
 		},
 		{
 			"path": "pages/video",

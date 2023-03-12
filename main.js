@@ -3,6 +3,7 @@ import uniStatusBar from '@/components/uniStatusBar'
 import navBar from '@/components/navBar'
 import fileList from '@/components/fileList'
 import fDialog from '@/components/fDialog'
+import separateLine from '@/components/separateLine'
 
 // #ifndef VUE3
 import Vue from 'vue'
@@ -53,6 +54,7 @@ export function createApp() {
 	app.component('navBar', navBar)
 	app.component('fileList', fileList)
 	app.component('fDialog', fDialog)
+	app.component('separateLine', separateLine)
 	return {
 		app
 	}
