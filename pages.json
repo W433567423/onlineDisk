@@ -34,7 +34,7 @@
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarBackgroundColor": "#fff",
+		"navigationBarBackgroundColor": "#eee",
 		"backgroundColor": "#fff",
 		"navigationBarTitleText": "涂涂的网盘"
 		// "navigationStyle": "custom"

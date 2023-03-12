@@ -1,6 +1,7 @@
 <template>
 	<view class="navBar">
-		<view class="fixed-top bg-white" :style="`top: ${statusBarHeight}`">
+		<!--  :style="`top: ${statusBarHeight}`" -->
+		<view class="fixed-top bg-white">
 			<view style="height: 44px;" class="flex border-bottom align-center">
 				<view class="flex-1 flex justify-start"><slot name="left"></slot></view>
 				<view class="flex-2 flex justify-center"><slot></slot></view>
