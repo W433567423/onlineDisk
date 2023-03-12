@@ -2,31 +2,41 @@
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
 			"path": "pages/index/index",
-			"style": {
-				"navigationStyle": "custom"
-			}
+			"style": {}
 		}, {
 			"path": "pages/list/list",
 			"style": {
-				"navigationStyle": "custom"
+
+				"navigationBarTitleText": "传输列表",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"color": "#333",
+							"colorPressed": "#009cff",
+							"float": "right",
+							"fontSize": "22px",
+							"fontSrc": "/static/iconfont.ttf",
+							"text": "\ue64a"
+						}]
+					}
+				}
 			}
-		}, {
+		},
+		{
 			"path": "pages/my/my",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		}, {
+			"style": {}
+		},
+		{
 			"path": "pages/video",
-			"style": {
-				"navigationStyle": "default"
-			}
+			"style": {}
 
 		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"navigationBarBackgroundColor": "#fff",
+		"backgroundColor": "#fff",
+		"navigationBarTitleText": "涂涂的网盘"
 		// "navigationStyle": "custom"
 	},
 	"tabBar": {
