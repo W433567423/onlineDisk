@@ -6,11 +6,19 @@
 				<text class="font-md ml-3">首页</text>
 			</template>
 			<template #right>
-				<view style="width: 60rpx;height: 60rpx;" class="flex align-center justify-center bg-light rounded-circle mr-3">
+				<view
+					style="width: 60rpx;height: 60rpx;"
+					class="flex align-center justify-center bg-light rounded-circle mr-3"
+					hover-class="bg-hover-light-important "
+				>
 					<span class="iconfont icon-zengjia" @click="handleOpenAddmune"></span>
 				</view>
-				<view style="width: 60rpx;height: 60rpx;" class="flex align-center justify-center bg-light rounded-circle mr-3">
-					<span class="iconfont icon-gengduo"></span>
+				<view
+					style="width: 60rpx;height: 60rpx;"
+					class="flex align-center justify-center bg-light rounded-circle mr-3"
+					hover-class="bg-hover-light-important"
+				>
+					<span class="iconfont icon-gengduo" @click="handleOpenSortmune"></span>
 				</view>
 			</template>
 		</navBar>
@@ -29,7 +37,14 @@
 		<!-- 搜索框部分 -->
 		<searchBox></searchBox>
 		<!-- 列表 -->
-		<fileList v-for="(item, index) in list" :key="index" :item="item" :index="index" @select="handleSelect"></fileList>
+		<fileList
+			v-for="(item, index) in list"
+			:key="index"
+			:item="item"
+			:index="index"
+			@handleSelectList="handleSelect"
+			@handleClickList="handleClickListItem(item)"
+		></fileList>
 		<!-- 底部选项 -->
 		<template v-if="checkedCount !== 0">
 			<view style="height: 115rpx;"></view>
@@ -48,16 +63,31 @@
 			</view>
 		</template>
 		<!-- 弹出层 -->
+		<!-- 删除 -->
 		<fDialog ref="deleteRef">是否删除选中项目</fDialog>
+		<!-- 重命名 -->
 		<fDialog ref="renameRef">
 			<input
 				type="text"
 				class="bg-light rounded flex-1 px-2"
 				style="height: 95rpx;font-size: 20px;"
 				placeholder="请输入修改后的文件名"
-				v-model="renameValue"
+				v-model="rename"
+				focus
 			/>
 		</fDialog>
+		<!-- 新建文件夹 -->
+		<fDialog ref="newDirRef">
+			<input
+				type="text"
+				class="bg-light rounded flex-1 px-2"
+				style="height: 95rpx;font-size: 20px;"
+				placeholder="请输入新的文件夹名称"
+				v-model="newDirName"
+				focus
+			/>
+		</fDialog>
+		<!-- 顶部加号菜单 -->
 		<uniPopup ref="addMuneRef" type="bottom">
 			<view class="bg-white flex" style="height: 200rpx;">
 				<view
@@ -65,6 +95,7 @@
 					hover-class="bg-light"
 					v-for="(item, index) in addMuneList"
 					:key="index"
+					@tap="handleClickAddMuneItem(item)"
 				>
 					<span
 						style="width: 110rpx; height: 110rpx;font-size: 65rpx;"
@@ -75,23 +106,41 @@
 				</view>
 			</view>
 		</uniPopup>
+		<!-- 顶部排序菜单 -->
+		<uniPopup ref="sortMuneRef" type="bottom">
+			<view class="bg-white">
+				<view
+					class="flex align-center justify-center py-3 bottom-border  font border-bottom border-light-secondary"
+					:class="index === sortIndex ? 'text-main' : 'text-dark'"
+					hover-class="bg-light"
+					v-for="(item, index) in sortOptions"
+					:key="index"
+					@click="handleChangeSort(index)"
+				>
+					{{ item.name }}
+				</view>
+			</view>
+		</uniPopup>
 	</view>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import searchBox from './cpns/searchBox.vue'
-import { IselectE, IactionItem } from './type'
+import { IselectE, IactionItem, IaddItem, IlistItem } from './type'
 import uniPopup from '@/uni_modules/uni-popup/components/uni-popup/uni-popup'
 
 type Ifunction = () => {}
 
 let list = ref([
-	{ type: 'dir', name: '我的笔记', create_time: '2023-03-11 12:37', checked: false },
-	{ type: 'image', name: '风景.jpg', create_time: '2023-03-11 12:37', checked: false },
-	{ type: 'video', name: '小视频.mp4', create_time: '2023-03-11 12:37', checked: false },
-	{ type: 'text', name: '记事本.txt', create_time: '2023-03-11 12:37', checked: false },
-	{ type: 'none', name: '压缩包.zip', create_time: '2023-03-11 12:37', checked: false }
+	{ type: 'image', name: '风景.jpg', data: '/static/logo.png', create_time: '2023-03-11 12:37', checked: false },
+	{ type: 'dir', name: '我的笔记', data: '', create_time: '2023-03-11 12:37', checked: false },
+	{ type: 'image', name: '风景.jpg', data: '/static/logo.png', create_time: '2023-03-11 12:37', checked: false },
+	{ type: 'video', name: '小视频.mp4', data: '/static/210710122716702150.mp4', create_time: '2023-03-11 12:37', checked: false },
+	{ type: 'text', name: '记事本.txt', data: '', create_time: '2023-03-11 12:37', checked: false },
+	{ type: 'image', name: '风景.jpg', data: '/static/logo.png', create_time: '2023-03-11 12:37', checked: false },
+	{ type: 'image', name: '风景.jpg', data: '/static/logo.png', create_time: '2023-03-11 12:37', checked: false },
+	{ type: 'none', name: '压缩包.zip', data: '', create_time: '2023-03-11 12:37', checked: false }
 ])
 const handleSelect = (e: IselectE) => {
 	list.value[e.index].checked = e.value
@@ -102,6 +151,39 @@ const checkedCount = computed(() => checkedList.value.length)
 //全选事件
 const handleCheckAll = (state: boolean) => {
 	list.value.forEach(item => (item.checked = state))
+}
+
+//点击列表
+const handleClickListItem = (item: IlistItem) => {
+	switch (item.type) {
+		case 'dir':
+			console.log('dir')
+			break
+		case 'image':
+			let images = list.value.filter(item => item.type === 'image')
+			uni.previewImage({
+				current: item.data,
+				urls: images.map(item => item.data)
+			})
+			break
+		case 'video':
+			console.log(`/page/video?videourl=${item.data}`)
+			uni.navigateTo({
+				url: `/pages/video?videourl=${item.data}&title=${item.name}`
+			})
+			// uni.navigateTo({
+			// 	url: '/pages/video'
+			// })
+			break
+		case 'text':
+			console.log('text')
+			break
+		case 'none':
+			console.log('none')
+			break
+		default:
+			break
+	}
 }
 
 // 底部菜单相关
@@ -135,31 +217,78 @@ const handleClickAction = (item: IactionItem) => {
 			})
 			break
 		case '重命名':
-			renameValue.value = checkedList.value[0].name
+			rename.value = checkedList.value[0].name
 			renameRef.value.open((close: Ifunction) => {
-				if (renameValue.value == '')
+				if (rename.value == '')
 					return uni.showToast({
-						title: '文件名不合法'
+						title: '文件名不合法',
+						icon: 'error'
 					})
-				else checkedList.value[0].name = renameValue.value
+				else checkedList.value[0].name = rename.value
 				close()
 			})
 			break
 	}
 }
-const renameValue = ref('')
+const rename = ref('')
 
 //顶部菜单
+// 更多部分
 const addMuneRef = ref(null)
-const handleOpenAddmune = () => {
-	addMuneRef.value.open()
-}
+const newDirRef = ref(null)
 const addMuneList = ref([
 	{ icon: 'icon-file-b-6', color: 'text-success', text: '上传图片' },
 	{ icon: 'icon-file-b-9', color: 'text-primary', text: '上传视频' },
 	{ icon: 'icon-file-b-8', color: 'text-muted', text: '上传文件' },
-	{ icon: 'icon-file-b-2', color: 'text-warning', text: '上传文件夹' }
+	{ icon: 'icon-file-b-2', color: 'text-warning', text: '新建文件夹' }
 ])
+const newDirName = ref('')
+
+const handleOpenAddmune = () => {
+	addMuneRef.value.open()
+}
+const handleClickAddMuneItem = (e: IaddItem) => {
+	addMuneRef.value.close()
+	switch (e.text) {
+		case '新建文件夹':
+			newDirRef.value.open((close: Ifunction) => {
+				if (newDirName.value == '') {
+					close()
+					return uni.showToast({
+						title: '请输入新的文件夹名称',
+						icon: 'error'
+					})
+				}
+				list.value.push({
+					type: 'dir',
+					name: newDirName.value,
+					data: '',
+					create_time: '2023-03-12 12:11',
+					checked: false
+				})
+				newDirName.value = ''
+				uni.showToast({
+					title: '新增成功'
+				})
+				close()
+			})
+	}
+}
+// 排序部分
+const sortMuneRef = ref(null)
+const sortIndex = ref(0)
+const sortOptions = [{ name: '按名称排序' }, { name: '按时间排序' }]
+const handleOpenSortmune = () => {
+	sortMuneRef.value.open()
+}
+const handleChangeSort = (index: number) => {
+	sortIndex.value = index
+	sortMuneRef.value.close()
+}
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.bg-hover-light-important {
+	background-color: #dae0e5 !important;
+}
+</style>

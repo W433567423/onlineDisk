@@ -1,5 +1,5 @@
 <template>
-	<uniPopup ref="dialog">
+	<uniPopup ref="dialog" :isMaskClick="false">
 		<view class="bg-white rounded" style="width: 600rpx;">
 			<view class="flex align-center justify-center font-weight-bold border-bottom border-light-secondary" style="height: 100rpx;">
 				{{ title }}
@@ -7,7 +7,14 @@
 			<view class="flex align-center justify-center p-3"><slot></slot></view>
 			<view class="flex  border-top border-light-secondary">
 				<view class="flex-1 text-muted flex align-center justify-center" @tap="handleCancel">{{ cancelText }}</view>
-				<view class="flex-1 text-main flex align-center justify-center" style="height: 100rpx;" @tap="handleConfirm">{{ comfirmText }}</view>
+				<view
+					class="flex-1 text-main flex align-center justify-center"
+					style="height: 100rpx;"
+					@tap="handleConfirm"
+					@keyup.enter.native="handleConfirm"
+				>
+					{{ comfirmText }}
+				</view>
 			</view>
 		</view>
 	</uniPopup>

@@ -1,11 +1,11 @@
 <template>
-	<view class="fileList p-3 flex align-center border-bottom border-light-secondary">
+	<view class="fileList p-3 flex align-center border-bottom border-light-secondary" hover-class="bg-light" @click="emit('handleClickList')">
 		<span class="iconfont icon" :class="iconClass" style="font-size: 60rpx;"></span>
 		<view class="flex flex-column ml-3" style="line-height: 1.2;">
 			<text class="font-md">{{ item.name }}</text>
 			<text class="font-sm text-muted">{{ item.create_time }}</text>
 		</view>
-		<view class="ml-auto flex align-center justify-center" style="width: 70rpx;height: 70rpx;" @click.stop="handleSelect">
+		<view class="ml-auto flex align-center justify-center" style="width: 70rpx;height: 70rpx;" @click.stop="handleSelectList">
 			<span class="iconfont icon-xuanze-yixuan text-primary" style="font-size: 40rpx;" v-if="item.checked"></span>
 			<span class="rounded-circle border" style="height: 25rpx;width: 25rpx ;" v-else></span>
 		</view>
@@ -49,9 +49,9 @@ const iconClass = computed(() => {
 })
 
 // 处理选中事件
-const emit = defineEmits(['select'])
-const handleSelect = () => {
-	emit('select', { index: props.index, value: !props.item.checked })
+const emit = defineEmits(['handleSelectList', 'handleClickList'])
+const handleSelectList = () => {
+	emit('handleSelectList', { index: props.index, value: !props.item.checked })
 }
 </script>
 
