@@ -1,8 +1,11 @@
 import {
 	createStore
 } from 'vuex'
-export default createStore({
-	state: {
-		test: 'ceshi'
+import user from './user'
+const store = createStore({
+
+	modules: {
+		user
 	}
 })
+export default store

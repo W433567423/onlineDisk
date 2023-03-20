@@ -25,10 +25,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { getCurrentInstance, ref } from 'vue'
+const { appContext } = getCurrentInstance()
+const $T = appContext.config.globalProperties.$T
+const $store = appContext.config.globalProperties.$store
+
 const form = ref({
-	username: '',
-	password: '',
+	username: 'ceshi',
+	password: '1234',
 	repassword: ''
 })
 const status = ref('login')
@@ -36,7 +40,29 @@ const handleChange = () => {
 	status.value = status.value === 'login' ? 'reg' : 'login'
 }
 // 登录
-const handleSubmit = () => {}
+const handleSubmit = () => {
+	const msg = status.value === 'login' ? '登录' : '注册'
+	$T.post('/user/' + status.value, form.value).then(res => {
+		uni.showToast({
+			title: `${msg}成功`,
+			icon: 'success'
+		})
+		if (status.value === 'login') {
+			$store.dispatch('user/login', res).then(() => {
+				console.log('？？？？')
+				uni.switchTab({
+					url: '/pages/index/index'
+				})
+			})
+		} else {
+			// 清空表单
+			form.value.username = ''
+			form.value.password = ''
+			form.value.repassword = ''
+			handleChange()
+		}
+	})
+}
 </script>
 
 <style lang="less" scoped></style>

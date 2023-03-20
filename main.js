@@ -10,8 +10,6 @@ import store from '@/store'
 // #ifndef VUE3
 import Vue from 'vue'
 Vue.config.productionTip = false
-Vue.prototype.$T = $T
-Vue.prototype.$store = store
 App.mpType = 'app'
 try {
 	function isPromise(obj) {
@@ -60,6 +58,8 @@ export function createApp() {
 	app.component('fDialog', fDialog)
 	app.component('separateLine', separateLine)
 	app.use(store)
+	app.config.globalProperties.$T = $T
+	app.config.globalProperties.$store = store
 	return {
 		app
 	}
