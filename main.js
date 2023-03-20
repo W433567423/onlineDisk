@@ -4,10 +4,14 @@ import navBar from '@/components/navBar'
 import fileList from '@/components/fileList'
 import fDialog from '@/components/fDialog'
 import separateLine from '@/components/separateLine'
+import $T from '@/common/request.js'
+import store from '@/store'
 
 // #ifndef VUE3
 import Vue from 'vue'
 Vue.config.productionTip = false
+Vue.prototype.$T = $T
+Vue.prototype.$store = store
 App.mpType = 'app'
 try {
 	function isPromise(obj) {
@@ -55,6 +59,7 @@ export function createApp() {
 	app.component('fileList', fileList)
 	app.component('fDialog', fDialog)
 	app.component('separateLine', separateLine)
+	app.use(store)
 	return {
 		app
 	}

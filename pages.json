@@ -6,7 +6,6 @@
 		}, {
 			"path": "pages/list/list",
 			"style": {
-
 				"navigationBarTitleText": "传输列表",
 				"app-plus": {
 					"titleNView": {
@@ -31,6 +30,14 @@
 		{
 			"path": "pages/video",
 			"style": {}
+
+		}, {
+			"path": "pages/login/login",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
 
 		}
 	],
