@@ -125,23 +125,43 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, getCurrentInstance, Ref } from 'vue'
 import searchBox from './cpns/searchBox.vue'
-import { IselectE, IactionItem, IaddItem, IlistItem } from './type'
+import { IselectE, IactionItem, IaddItem, IlistItem, IRawlistItem } from './type'
+import { useStore } from 'vuex'
+const store = useStore()
 import uniPopup from '@/uni_modules/uni-popup/components/uni-popup/uni-popup'
+const { appContext } = getCurrentInstance()
+const $T = appContext.config.globalProperties.$T
 
 type Ifunction = () => {}
 
-let list = ref([
-	{ type: 'image', name: '风景.jpg', data: '/static/logo.png', create_time: '2023-03-11 12:37', checked: false },
-	{ type: 'dir', name: '我的笔记', data: '', create_time: '2023-03-11 12:37', checked: false },
-	{ type: 'image', name: '风景.jpg', data: '/static/logo.png', create_time: '2023-03-11 12:37', checked: false },
-	{ type: 'video', name: '小视频.mp4', data: '/static/210710122716702150.mp4', create_time: '2023-03-11 12:37', checked: false },
-	{ type: 'text', name: '记事本.txt', data: '', create_time: '2023-03-11 12:37', checked: false },
-	{ type: 'image', name: '风景.jpg', data: '/static/logo.png', create_time: '2023-03-11 12:37', checked: false },
-	{ type: 'image', name: '风景.jpg', data: '/static/logo.png', create_time: '2023-03-11 12:37', checked: false },
-	{ type: 'none', name: '压缩包.zip', data: '', create_time: '2023-03-11 12:37', checked: false }
-])
+// 获取数据
+// 格式化数据
+const formatListDate = (rawListDate: Array<IRawlistItem>) => {
+	return rawListDate.map(item => {
+		let type
+		if (item.isdir === 1) {
+			type = 'dir'
+		} else {
+			type = item.ext.split('/')[0] || 'none'
+		}
+		return {
+			type,
+			checked: false,
+			name: item.name,
+			data: 'https://' + item.url,
+			created_time: item.created_time
+		}
+	})
+}
+const getListData = () => {
+	$T.get('/file/list?file_id=0', { token: true }).then(res => (list.value = formatListDate(res.rows)))
+}
+getListData()
+
+let list: Ref<IlistItem[]> = ref([{ type: '', checked: false, data: '', checked_time: '', name: '' }])
+
 const handleSelect = (e: IselectE) => {
 	list.value[e.index].checked = e.value
 }
@@ -160,11 +180,13 @@ const handleClickListItem = (item: IlistItem) => {
 			console.log('dir')
 			break
 		case 'image':
-			let images = list.value.filter(item => item.type === 'image')
-			uni.previewImage({
-				current: item.data,
-				urls: images.map(item => item.data)
-			})
+			if (typeof list.value != undefined) {
+				let images = list.value.filter(item => item.type === 'image')
+				uni.previewImage({
+					current: item.data,
+					urls: images.map(item => item.data)
+				})
+			}
 			break
 		case 'video':
 			console.log(`/page/video?videourl=${item.data}`)
@@ -189,7 +211,7 @@ const handleClickListItem = (item: IlistItem) => {
 // 底部菜单相关
 const deleteRef = ref(null)
 const renameRef = ref(null)
-let actions = computed(() => {
+let actions: Ref<Array<IactionItem>> = computed(() => {
 	if (checkedCount.value > 1) return [{ text: '下载', icon: 'icon-xiazai' }, { text: '删除', icon: 'icon-shanchu' }]
 	else
 		return [
@@ -236,7 +258,7 @@ const rename = ref('')
 // 更多部分
 const addMuneRef = ref(null)
 const newDirRef = ref(null)
-const addMuneList = ref([
+const addMuneList: Ref<Array<IaddItem>> = ref([
 	{ icon: 'icon-file-b-6', color: 'text-success', text: '上传图片' },
 	{ icon: 'icon-file-b-9', color: 'text-primary', text: '上传视频' },
 	{ icon: 'icon-file-b-8', color: 'text-muted', text: '上传文件' },

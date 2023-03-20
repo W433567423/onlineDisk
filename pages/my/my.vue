@@ -28,12 +28,12 @@
 <script setup lang="ts">
 import uniListItem from '@/uni_modules/uni-list/components/uni-list-item/uni-list-item'
 import { useStore } from 'vuex'
+const store = useStore()
 import { computed, getCurrentInstance, onMounted } from 'vue'
 const { appContext } = getCurrentInstance()
 const $T = appContext.config.globalProperties.$T
 // 工具函数(byte转GB)
 import { toGB } from '@/utils'
-const store = useStore()
 
 // 引入user数据
 const user = computed(() => store.state.userModule.user || {})

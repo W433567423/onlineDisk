@@ -21,6 +21,7 @@ const userModule = {
 			state.token = user.token
 			uni.setStorageSync('user', JSON.stringify(user))
 			uni.setStorageSync('token', user.token)
+			console.log(user.token)
 		},
 		UserLogout({
 			state

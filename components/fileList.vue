@@ -4,7 +4,7 @@
 			<span class="iconfont icon" :class="iconClass" style="font-size: 60rpx;"></span>
 			<view class="flex flex-column ml-3" style="line-height: 1.2;">
 				<text class="font-md">{{ item.name }}</text>
-				<text class="font-sm text-muted">{{ item.create_time }}</text>
+				<text class="font-sm text-muted">{{ item.created_time }}</text>
 			</view>
 			<!-- 右边选择框 -->
 			<view v-if="isShowSelect" class="ml-auto ">
