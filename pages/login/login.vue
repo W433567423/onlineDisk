@@ -1,5 +1,13 @@
 <template>
 	<view class="login">
+		<view
+			class="position-fixed top-0 left-0 bottom-0 right-0 flex align-center justify-center text-muted bg-light"
+			style="z-index: 99...;"
+			v-if="showLoad"
+		>
+			<text>加载中</text>
+		</view>
+
 		<view style="height: 44px;"></view>
 		<view class="flex align-center justify-center font-lg text-muted" style="margin-top: 100rpx;margin-bottom: 80rpx;">
 			{{ status === 'login' ? '欢迎回来!' : '呀!又多了个小可耐呢~' }}
@@ -25,31 +33,35 @@
 </template>
 
 <script setup lang="ts">
-import { getCurrentInstance, ref } from 'vue'
+import { getCurrentInstance, onMounted, ref } from 'vue'
+import { useStore } from 'vuex'
 const { appContext } = getCurrentInstance()
 const $T = appContext.config.globalProperties.$T
-const $store = appContext.config.globalProperties.$store
+const store = useStore()
 
 const form = ref({
-	username: 'ceshi',
+	username: 'wtututu',
 	password: '1234',
 	repassword: ''
 })
+
+// 登录/注册切换
 const status = ref('login')
 const handleChange = () => {
 	status.value = status.value === 'login' ? 'reg' : 'login'
 }
+
 // 登录
 const handleSubmit = () => {
 	const msg = status.value === 'login' ? '登录' : '注册'
+	// 登录/注册逻辑实现
 	$T.post('/user/' + status.value, form.value).then(res => {
 		uni.showToast({
 			title: `${msg}成功`,
 			icon: 'success'
 		})
 		if (status.value === 'login') {
-			$store.dispatch('user/login', res).then(() => {
-				console.log('？？？？')
+			store.dispatch('userModule/Userlogin', res).then(() => {
 				uni.switchTab({
 					url: '/pages/index/index'
 				})
@@ -63,6 +75,23 @@ const handleSubmit = () => {
 		}
 	})
 }
+
+// 加载蒙版
+let showLoad = ref(false)
+onMounted(() => {
+	showLoad.value = true
+	if (!store.state.userModule.token) {
+		uni.showToast({
+			title: '请先登录',
+			icon: 'error'
+		})
+		showLoad.value = false
+		return
+	}
+	uni.switchTab({
+		url: '/pages/index/index'
+	})
+})
 </script>
 
 <style lang="less" scoped></style>

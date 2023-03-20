@@ -4,7 +4,7 @@ import navBar from '@/components/navBar'
 import fileList from '@/components/fileList'
 import fDialog from '@/components/fDialog'
 import separateLine from '@/components/separateLine'
-import $T from '@/common/request.js'
+import $T from '@/utils/request'
 import store from '@/store'
 
 // #ifndef VUE3

@@ -3,17 +3,32 @@ const userModule = {
 	state() {
 		return {
 			user: null,
-			token: '1'
+			token: ''
+		}
+	},
+	mutations: {
+		syncSize(state, sizeObj) {
+			state.user.total_size = sizeObj.total_size
+			state.user.used_size = sizeObj.used_size
 		}
 	},
 	actions: {
-		login({
+		Userlogin({
 			state
 		}, user) {
 			state.user = user
 			state.token = user.token
 			uni.setStorageSync('user', JSON.stringify(user))
 			uni.setStorageSync('token', user.token)
+		},
+		initUser({
+			state
+		}) {
+			const user = uni.getStorageSync('user')
+			if (user) {
+				state.user = JSON.parse(user)
+				state.token = state.user.token
+			}
 		}
 	}
 }

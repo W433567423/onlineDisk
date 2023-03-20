@@ -1,5 +1,7 @@
 <script setup lang="ts">
-let name = 'tutu'
+import { useStore } from 'vuex'
+// 初始化用户信息
+useStore().dispatch('userModule/initUser')
 </script>
 
 <style lang="less">
