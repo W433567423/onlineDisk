@@ -39,7 +39,7 @@ export default {
 					});
 					return rej("请先登录")
 				}
-				// 往header头中添加token
+				// 往header头中添加token 
 				options.header.token = token
 			}
 

@@ -1,3 +1,4 @@
+import $T from '@/utils/request'
 const userModule = {
 	namespaced: true,
 	state() {
@@ -20,6 +21,26 @@ const userModule = {
 			state.token = user.token
 			uni.setStorageSync('user', JSON.stringify(user))
 			uni.setStorageSync('token', user.token)
+		},
+		UserLogout({
+			state
+		}) {
+			$T.get('/user/logout', {
+				token: true
+			}).then(res => {
+				state.user = null
+				state.token = null
+				uni.removeStorageSync('user')
+				uni.removeStorageSync('token')
+				uni.reLaunch({
+					url: '/pages/login/login'
+				})
+				uni.showToast({
+					title: res,
+					icon: 'success'
+				})
+			})
+
 		},
 		initUser({
 			state

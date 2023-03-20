@@ -34,9 +34,9 @@
 
 <script setup lang="ts">
 import { getCurrentInstance, onMounted, ref } from 'vue'
-import { useStore } from 'vuex'
 const { appContext } = getCurrentInstance()
 const $T = appContext.config.globalProperties.$T
+import { useStore } from 'vuex'
 const store = useStore()
 
 const form = ref({
@@ -78,7 +78,7 @@ const handleSubmit = () => {
 
 // 加载蒙版
 let showLoad = ref(false)
-onMounted(() => {
+const lanjie = () => {
 	showLoad.value = true
 	if (!store.state.userModule.token) {
 		uni.showToast({
@@ -91,7 +91,8 @@ onMounted(() => {
 	uni.switchTab({
 		url: '/pages/index/index'
 	})
-})
+}
+lanjie()
 </script>
 
 <style lang="less" scoped></style>

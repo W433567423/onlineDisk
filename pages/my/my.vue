@@ -1,5 +1,5 @@
 <template>
-	<view class="my ">
+	<view class="my">
 		<view class="p-3 flex align-center">
 			<image src="../../static/touxiang.jpg" style="width: 120rpx; height: 120rpx;" class="rounded-circle flex-shrink mr-3"></image>
 			<view class="flex-1 flex flex-column text-muted">
@@ -21,7 +21,7 @@
 			</view>
 		</view>
 		<separate-line></separate-line>
-		<uni-list-item title="其他设置" clickable @click="onClick" link=""></uni-list-item>
+		<navigator url="../setting"><uni-list-item title="其他设置" clickable link=""></uni-list-item></navigator>
 	</view>
 </template>
 
@@ -36,7 +36,7 @@ import { toGB } from '@/utils'
 const store = useStore()
 
 // 引入user数据
-const user = computed(() => store.state.userModule.user)
+const user = computed(() => store.state.userModule.user || {})
 // 进度条
 const progress = computed(() => (user.value.used_size / user.value.total_size) * 100)
 //
@@ -46,8 +46,6 @@ const getSize = () => {
 }
 
 getSize()
-
-const onClick = () => {}
 </script>
 
 <style lang="less" scoped></style>
