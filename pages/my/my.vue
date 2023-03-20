@@ -7,7 +7,7 @@
 					<text class="font-lg text-dark m-2">{{ user.nickname ? user.nickname : user.username }}</text>
 					{{ user.sex }} 湖北 20 岁
 				</view>
-				<span class="text-ellipsis" style="font-weight:initial;font-size: 14rpx;font-style: italic; ">
+				<span class="text-ellipsis" style="font-weight:initial;font-size: 12px;font-style: italic; ">
 					{{ user.desc ? user.desc : '对方很懒,暂无描述~' }}
 				</span>
 			</view>
