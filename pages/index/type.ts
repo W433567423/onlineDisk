@@ -38,11 +38,23 @@ interface IaddItem {
 	color: string
 }
 // dirs的类型
-
 interface IDirs {
 	id: number
 	name: string
 }
-type Ifunction = () => {}
+// 上传的临时文件的类型
+interface ITempFile {
+	path: string
+	size: number
+}
+// 上传对象的类型
+interface IFileObj {
+	name?: string
+	type?: string
+	size?: number
+	key: string
+	process: number
+	status: boolean
+}
 
-export { IselectE, IactionItem, IaddItem, IlistItem, IRawlistItem, IDirs, Ifunction }
+export { IselectE, IactionItem, IaddItem, IlistItem, IRawlistItem, IDirs, ITempFile, IFileObj }

@@ -35,6 +35,7 @@
 <script setup lang="ts">
 import { getCurrentInstance, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
+import { IUser } from './type'
 const { appContext } = getCurrentInstance()
 const $T = appContext.config.globalProperties.$T
 const store = useStore()
@@ -55,13 +56,14 @@ const handleChange = () => {
 const handleSubmit = () => {
 	const msg = status.value === 'login' ? '登录' : '注册'
 	// 登录/注册逻辑实现
-	$T.post('/user/' + status.value, form.value).then(res => {
+	$T.post('/user/' + status.value, form.value).then((res: IUser) => {
 		uni.showToast({
 			title: `${msg}成功`,
 			icon: 'success'
 		})
 		if (status.value === 'login') {
 			store.dispatch('userModule/Userlogin', res).then(() => {
+				console.log(res)
 				uni.switchTab({
 					url: '/pages/index/index'
 				})

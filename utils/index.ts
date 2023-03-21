@@ -1,4 +1,4 @@
-const toGB = (byte: Number) => {
+const toGB = (byte: number) => {
 	if (byte === 0) {
 		return '0KB'
 	}
@@ -7,5 +7,11 @@ const toGB = (byte: Number) => {
 	const i = Math.floor(Math.log(byte) / Math.log(k))
 	return (byte / Math.pow(k, i)).toPrecision(3) + ' ' + size[i]
 }
-
-export { toGB }
+const genID = (length: any) => {
+	return Number(
+		Math.random()
+			.toString()
+			.substring(3, 3 + length) + Date.now()
+	).toString(36)
+}
+export { toGB, genID }

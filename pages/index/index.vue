@@ -4,26 +4,26 @@
 		<navBar v-if="checkedCount === 0">
 			<template #left>
 				<view
-					style="width: 44rpx;height: 44rpx;background-color: yellow;"
+					style="width: 44rpx; height: 44rpx; background-color: yellow"
 					class="flex align-center justify-center bg-light rounded-circle ml-3"
 					hover-class="bg-hover-light-important "
 					@tap="handleBackTap"
 					v-if="currentFile"
 				>
-					<span class="iconfont icon-fanhui" style="font-size:10px ;"></span>
+					<span class="iconfont icon-fanhui" style="font-size: 10px"></span>
 				</view>
-				<text class="font-sm ml-2" style="line-height: 44rpx;">{{ currentFile ? currentFile.name : '首页' }}</text>
+				<text class="font-sm ml-2" style="line-height: 44rpx">{{ currentFile ? currentFile.name : '首页' }}</text>
 			</template>
 			<template #right>
 				<view
-					style="width: 60rpx;height: 60rpx;"
+					style="width: 60rpx; height: 60rpx"
 					class="flex align-center justify-center bg-light rounded-circle mr-3"
 					hover-class="bg-hover-light-important "
 				>
 					<span class="iconfont icon-zengjia" @click="handleOpenAddmune"></span>
 				</view>
 				<view
-					style="width: 60rpx;height: 60rpx;"
+					style="width: 60rpx; height: 60rpx"
 					class="flex align-center justify-center bg-light rounded-circle mr-3"
 					hover-class="bg-hover-light-important"
 				>
@@ -56,17 +56,17 @@
 		></fileList>
 		<!-- 底部选项 -->
 		<template v-if="checkedCount !== 0">
-			<view style="height: 115rpx;"></view>
-			<view style="height: 115rpx;" class="flex align-stretch bg-primary text-white fixed-bottom">
+			<view style="height: 115rpx"></view>
+			<view style="height: 115rpx" class="flex align-stretch bg-primary text-white fixed-bottom">
 				<view
 					class="flex-1 flex flex-column align-center justify-center border"
-					style="line-height: 1.5;"
+					style="line-height: 1.5"
 					v-for="(item, index) in actions"
 					:key="index"
 					@click="handleClickAction(item)"
 					hover-class="bg-hover-primary"
 				>
-					<span class="iconfont " :class="item.icon"></span>
+					<span class="iconfont" :class="item.icon"></span>
 					{{ item.text }}
 				</view>
 			</view>
@@ -79,7 +79,7 @@
 			<input
 				type="text"
 				class="bg-light rounded flex-1 px-2"
-				style="height: 95rpx;font-size: 20px;"
+				style="height: 95rpx; font-size: 20px"
 				placeholder="请输入修改后的文件名"
 				v-model="rename"
 				focus
@@ -90,7 +90,7 @@
 			<input
 				type="text"
 				class="bg-light rounded flex-1 px-2"
-				style="height: 95rpx;font-size: 20px;"
+				style="height: 95rpx; font-size: 20px"
 				placeholder="请输入新的文件夹名称"
 				v-model="newDirName"
 				focus
@@ -98,7 +98,7 @@
 		</fDialog>
 		<!-- 顶部加号菜单 -->
 		<uniPopup ref="addMuneRef" type="bottom">
-			<view class="bg-white flex" style="height: 200rpx;">
+			<view class="bg-white flex" style="height: 200rpx">
 				<view
 					class="flex-1 flex align-center justify-center flex-column"
 					hover-class="bg-light"
@@ -107,8 +107,8 @@
 					@tap="handleClickAddMuneItem(item)"
 				>
 					<span
-						style="width: 110rpx; height: 110rpx;font-size: 65rpx;"
-						class="rounded-circle bg-light iconfont  flex align-center justify-center "
+						style="width: 110rpx; height: 110rpx; font-size: 65rpx"
+						class="rounded-circle bg-light iconfont flex align-center justify-center"
 						:class="[item.icon, item.color]"
 					></span>
 					<text class="font text-muted">{{ item.text }}</text>
@@ -119,7 +119,7 @@
 		<uniPopup ref="sortMuneRef" type="bottom">
 			<view class="bg-white">
 				<view
-					class="flex align-center justify-center py-3 bottom-border  font border-bottom border-light-secondary"
+					class="flex align-center justify-center py-3 bottom-border font border-bottom border-light-secondary"
 					:class="index === sortIndex ? 'text-main' : 'text-dark'"
 					hover-class="bg-light"
 					v-for="(item, index) in sortOptions"
@@ -139,8 +139,9 @@ import { useStore } from 'vuex'
 
 import searchBox from './cpns/searchBox.vue'
 import uniPopup from '@/uni_modules/uni-popup/components/uni-popup/uni-popup'
+import { genID } from '@/utils'
 
-import { IselectE, IactionItem, IaddItem, IlistItem, IRawlistItem, IDirs, Ifunction } from './type'
+import { IselectE, IactionItem, IaddItem, IlistItem, IRawlistItem, IDirs } from './type'
 
 // 上下文对象，发送请求对象，vuex站台对象
 const { appContext } = getCurrentInstance()
@@ -220,7 +221,9 @@ const formatListDate = (rawListDate: Array<IRawlistItem>) => {
 // 获取列表数据
 const getListData = () => {
 	let orderby = sortOptions[sortIndex.value].key as string
-	$T.get(`/file/list?file_id=${currenfFile_id.value}&orderby=${orderby}`, { token: true }).then(res => (list.value = formatListDate(res.rows)))
+	$T.get(`/file/list?file_id=${currenfFile_id.value}&orderby=${orderby}`, {
+		token: true
+	}).then(res => (list.value = formatListDate(res.rows)))
 }
 // 处理选择事件
 const handleSelect = (e: IselectE) => {
@@ -268,15 +271,13 @@ const handleClickAction = (item: IactionItem) => {
 			deleteRef.value.open((close: Ifunction) => {
 				let ids = checkedList.value.map(item => item.id).join(',')
 				uni.showLoading({ title: '删除中...', icon: 'loading' })
-				$T.post('/file/delete', { ids }, { token: true })
-					.then(res => {
-						getListData()
-						uni.showToast({
-							title: '删除成功',
-							icon: 'success'
-						})
+				$T.post('/file/delete', { ids }, { token: true }).then(() => {
+					getListData()
+					uni.showToast({
+						title: '删除成功',
+						icon: 'success'
 					})
-					.catch(err => {})
+				})
 				uni.hideLoading()
 				close()
 			})
@@ -303,6 +304,16 @@ const handleOpenAddmune = () => {
 const handleClickAddMuneItem = (e: IaddItem) => {
 	addMuneRef.value.close()
 	switch (e.text) {
+		case '上传图片':
+			uni.chooseImage({
+				count: 9,
+				success: res => {
+					res.tempFiles.forEach(item => {
+						uploadFile(item, 'image')
+					})
+				}
+			})
+			break
 		case '新建文件夹':
 			newDirRef.value.open((close: Ifunction) => {
 				if (newDirName.value == '') {
@@ -313,7 +324,7 @@ const handleClickAddMuneItem = (e: IaddItem) => {
 					})
 					return
 				}
-				$T.post('/file/mkdir', { file_id: currenfFile_id.value, name: newDirName.value }, { token: true }).then(res => {
+				$T.post('/file/mkdir', { file_id: currenfFile_id.value, name: newDirName.value }, { token: true }).then(() => {
 					getListData()
 					newDirName.value = ''
 					uni.showToast({
@@ -324,6 +335,9 @@ const handleClickAddMuneItem = (e: IaddItem) => {
 				newDirName.value = ''
 				close()
 			})
+			break
+		default:
+			break
 	}
 }
 // 返回上一个目录
@@ -344,6 +358,44 @@ const handleSearchEmits = (e: string) => {
 	$T.get('/file/search?keyword=' + e, { token: true }).then(res => (list.value = formatListDate(res)))
 }
 
+const uploadFile = (file, type) => {
+	let t = type
+	const key = genID(8)
+	let name = file.name
+	if (!name) {
+		name = file.path.substring(file.path.lastIndexOf('/') + 1)
+	}
+	let obj = {
+		name,
+		type: t,
+		size: file.size,
+		key,
+		progress: 0,
+		status: true,
+		created_time: new Date().getTime()
+	}
+	// 创建上传任务
+	store.dispatch('fileModule/createUploadTask', obj)
+	// 上传
+	$T.upload(
+		'/file/upload?file_id=' + currenfFile_id,
+		{
+			filePath: file.path
+		},
+		p => {
+			console.log(p)
+			// 更新上传任务进度
+			store.dispatch('fileModule/updateUploadProgress', {
+				status: true,
+				progress: p,
+				key
+			})
+		}
+	).then(res => {
+		console.log(res)
+		getListData()
+	})
+}
 // 生命周期直接执行的函数
 getListData() // 获取数据
 if (uni.getStorageSync('dirs')) {

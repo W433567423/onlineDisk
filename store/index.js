@@ -1,10 +1,12 @@
 import {
 	createStore
 } from 'vuex'
-import userModule from './user'
+import userModule from './userModule'
+import fileModule from './fileModule'
 const store = createStore({
 	modules: {
-		userModule
+		userModule,
+		fileModule
 	}
 })
 export default store

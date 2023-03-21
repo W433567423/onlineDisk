@@ -2,8 +2,8 @@
 	<view class="fileList">
 		<view class=" p-3 flex align-center border-bottom border-light-secondary" hover-class="bg-light" @click="emit('handleClickList')">
 			<span class="iconfont icon" :class="iconClass" style="font-size: 60rpx;"></span>
-			<view class="flex flex-column ml-3" style="line-height: 1.2;">
-				<text class="font-md">{{ item.name }}</text>
+			<view class="flex flex-column ml-3" style="line-height: 1.2;max-width: 500rpx;">
+				<text class="font-md text-ellipsis">{{ item.name }}</text>
 				<text class="font-sm text-muted">{{ item.created_time }}</text>
 			</view>
 			<!-- 右边选择框 -->
@@ -27,7 +27,7 @@ import { IlistItem } from '@/pages/index/type'
 const props = withDefaults(
 	defineProps<{
 		item: IlistItem
-		index: Number | String
+		index: number | string
 		isShowSelect?: boolean
 	}>(),
 	{ isShowSelect: true }
