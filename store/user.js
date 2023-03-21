@@ -26,20 +26,15 @@ const userModule = {
 		UserLogout({
 			state
 		}) {
+			state.user = null
+			state.token = null
+			uni.removeStorageSync('user')
+			uni.removeStorageSync('token')
+			uni.reLaunch({
+				url: '/pages/login/login'
+			})
 			$T.get('/user/logout', {
 				token: true
-			}).then(res => {
-				state.user = null
-				state.token = null
-				uni.removeStorageSync('user')
-				uni.removeStorageSync('token')
-				uni.reLaunch({
-					url: '/pages/login/login'
-				})
-				uni.showToast({
-					title: res,
-					icon: 'success'
-				})
 			})
 
 		},

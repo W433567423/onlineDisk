@@ -129,6 +129,7 @@ import { computed, ref, getCurrentInstance, Ref } from 'vue'
 import searchBox from './cpns/searchBox.vue'
 import { IselectE, IactionItem, IaddItem, IlistItem, IRawlistItem } from './type'
 import { useStore } from 'vuex'
+import { log } from 'console'
 const store = useStore()
 import uniPopup from '@/uni_modules/uni-popup/components/uni-popup/uni-popup'
 const { appContext } = getCurrentInstance()
@@ -138,6 +139,7 @@ type Ifunction = () => {}
 
 // 获取数据
 // 格式化数据
+const list: Ref<IlistItem[]> = ref([{ type: '', checked: false, data: '', checked_time: '', name: '' }])
 const formatListDate = (rawListDate: Array<IRawlistItem>) => {
 	return rawListDate.map(item => {
 		let type
@@ -159,8 +161,6 @@ const getListData = () => {
 	$T.get('/file/list?file_id=0', { token: true }).then(res => (list.value = formatListDate(res.rows)))
 }
 getListData()
-
-let list: Ref<IlistItem[]> = ref([{ type: '', checked: false, data: '', checked_time: '', name: '' }])
 
 const handleSelect = (e: IselectE) => {
 	list.value[e.index].checked = e.value
@@ -211,16 +211,22 @@ const handleClickListItem = (item: IlistItem) => {
 // 底部菜单相关
 const deleteRef = ref(null)
 const renameRef = ref(null)
-let actions: Ref<Array<IactionItem>> = computed(() => {
-	if (checkedCount.value > 1) return [{ text: '下载', icon: 'icon-xiazai' }, { text: '删除', icon: 'icon-shanchu' }]
-	else
-		return [
-			{ text: '下载', icon: 'icon-xiazai' },
-			{ text: '分享', icon: 'icon-fenxiang-1' },
-			{ text: '删除', icon: 'icon-shanchu' },
-			{ text: '重命名', icon: 'icon-chongmingming' }
-		]
-})
+// const actions: Ref<Array<IactionItem>> = computed(() => {
+// 	if (checkedCount.value > 1) return [{ text: '下载', icon: 'icon-xiazai' }, { text: '删除', icon: 'icon-shanchu' }]
+// 	return [
+// 		{ text: '下载', icon: 'icon-xiazai' },
+// 		{ text: '分享', icon: 'icon-fenxiang-1' },
+// 		{ text: '删除', icon: 'icon-shanchu' },
+// 		{ text: '重命名', icon: 'icon-chongmingming' }
+// 	]
+// })
+const actions = [
+	{ text: '下载', icon: 'icon-xiazai' },
+	{ text: '分享', icon: 'icon-fenxiang-1' },
+	{ text: '删除', icon: 'icon-shanchu' },
+	{ text: '重命名', icon: 'icon-chongmingming' }
+]
+
 const handleClickAction = (item: IactionItem) => {
 	switch (item.text) {
 		case '下载':
@@ -258,12 +264,12 @@ const rename = ref('')
 // 更多部分
 const addMuneRef = ref(null)
 const newDirRef = ref(null)
-const addMuneList: Ref<Array<IaddItem>> = ref([
+const addMuneList: IaddItem[] = [
 	{ icon: 'icon-file-b-6', color: 'text-success', text: '上传图片' },
 	{ icon: 'icon-file-b-9', color: 'text-primary', text: '上传视频' },
 	{ icon: 'icon-file-b-8', color: 'text-muted', text: '上传文件' },
 	{ icon: 'icon-file-b-2', color: 'text-warning', text: '新建文件夹' }
-])
+]
 const newDirName = ref('')
 
 const handleOpenAddmune = () => {

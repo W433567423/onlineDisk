@@ -1,4 +1,4 @@
-// import $store from '@/store/index.js';
+import $store from '@/store';
 export default {
 	// 全局配置
 	common: {
@@ -31,7 +31,7 @@ export default {
 				if (!token && options.noJump !== true) {
 					uni.showToast({
 						title: '请先登录',
-						icon: 'none'
+						icon: 'error'
 					});
 					// token不存在时跳转
 					uni.navigateTo({
@@ -61,10 +61,12 @@ export default {
 							});
 						}
 						// token不合法，直接退出登录
-						if (result.data.data === 'Token 令牌不合法!') {
+						if (result.data.data.message === 'token不合法') {
 							// 退出登录操作
-							// $store.dispatch('logout')
+							console.log('ssssssssssss')
+							$store.dispatch('userModule/UserLogout')
 						}
+						console.log(result.data.data)
 						return rej(result.data)
 					}
 					// 其他验证...
@@ -111,7 +113,7 @@ export default {
 			if (!token) {
 				uni.showToast({
 					title: '请先登录',
-					icon: 'none'
+					icon: 'error'
 				});
 				// token不存在时跳转
 				return uni.reLaunch({

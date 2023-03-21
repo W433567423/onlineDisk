@@ -33,6 +33,10 @@ const props = withDefaults(
 	{ isShowSelect: true }
 )
 // 图标处理
+interface IIcon {
+	icon: string
+	color: string
+}
 const icons = {
 	dir: {
 		icon: 'icon-file-b-2',
@@ -56,8 +60,8 @@ const icons = {
 	}
 }
 const iconClass = computed(() => {
-	const item = icons[props.item.type]
-	return `${item.icon} ${item.color}`
+	const item: IIcon = icons[props.item.type]
+	return `${item?.icon} ${item?.color}`
 })
 
 // 处理选中事件
