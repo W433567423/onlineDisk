@@ -11,7 +11,7 @@
 		<!-- 占位 -->
 		<view>
 			<uniStatusBar></uniStatusBar>
-			<view style="height: 44px"></view>
+			<view :style="'height:' + statusBarHeight"></view>
 		</view>
 	</view>
 </template>

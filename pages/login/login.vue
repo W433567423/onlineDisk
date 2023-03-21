@@ -2,7 +2,7 @@
 	<view class="login">
 		<view
 			class="position-fixed top-0 left-0 bottom-0 right-0 flex align-center justify-center text-muted bg-light"
-			style="z-index: 99...;"
+			style="z-index: 99;"
 			v-if="showLoad"
 		>
 			<text>加载中</text>
@@ -34,23 +34,23 @@
 
 <script setup lang="ts">
 import { getCurrentInstance, onMounted, ref } from 'vue'
+import { useStore } from 'vuex'
 const { appContext } = getCurrentInstance()
 const $T = appContext.config.globalProperties.$T
-import { useStore } from 'vuex'
 const store = useStore()
 
+const showLoad = ref(false)
+const status = ref('login')
 const form = ref({
 	username: 'wtututu',
 	password: '1234',
 	repassword: ''
 })
 
-// 登录/注册切换
-const status = ref('login')
+// 登录/注册切换事件
 const handleChange = () => {
 	status.value = status.value === 'login' ? 'reg' : 'login'
 }
-
 // 登录
 const handleSubmit = () => {
 	const msg = status.value === 'login' ? '登录' : '注册'
@@ -75,9 +75,7 @@ const handleSubmit = () => {
 		}
 	})
 }
-
-// 加载蒙版
-let showLoad = ref(false)
+//登录前的蒙版
 const lanjie = () => {
 	showLoad.value = true
 	if (!store.state.userModule.token) {
