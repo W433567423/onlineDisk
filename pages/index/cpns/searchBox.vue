@@ -8,12 +8,24 @@
 				>
 					<span class="iconfont icon-sousuo"></span>
 				</view>
-				<input type="text" style="height: 70rpx;padding-left: 70rpx;" class="bg-light font-md rounded-circle" placeholder="搜索网盘文件" />
+				<input
+					type="text"
+					style="height: 70rpx;padding-left: 70rpx;"
+					class="bg-light font-md rounded-circle"
+					placeholder="搜索网盘文件"
+					@input="search"
+				/>
 			</view>
 		</view>
 	</view>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const emits = defineEmits(['handleSearch', 'handleFlashList'])
+const search = (e: any) => {
+	if (e.detail.value == '') return emits('handleFlashList')
+	emits('handleSearch', e.detail.value as string)
+}
+</script>
 
 <style lang="less" scoped></style>

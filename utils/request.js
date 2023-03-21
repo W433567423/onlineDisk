@@ -2,7 +2,7 @@ import $store from '@/store';
 export default {
 	// 全局配置
 	common: {
-		baseUrl: "http://43.138.34.13:7001",
+		baseUrl: "https://aod.wtututu.top",
 		header: {
 			'Content-Type': 'application/json;charset=UTF-8',
 		},
@@ -26,7 +26,7 @@ export default {
 			// 请求之前验证...
 			// token验证
 			if (options.token) {
-				let token = uni.getStorageSync('token')
+				const token = uni.getStorageSync('token')
 				// 二次验证
 				if (!token && options.noJump !== true) {
 					uni.showToast({
@@ -61,12 +61,10 @@ export default {
 							});
 						}
 						// token不合法，直接退出登录
-						if (result.data.data.message === 'token不合法') {
+						if (result.data.data?.message === 'token不合法') {
 							// 退出登录操作
-							console.log('ssssssssssss')
 							$store.dispatch('userModule/UserLogout')
 						}
-						console.log(result.data.data)
 						return rej(result.data)
 					}
 					// 其他验证...

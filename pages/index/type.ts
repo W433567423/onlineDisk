@@ -1,4 +1,5 @@
-export interface IRawlistItem {
+// 原始数据列表
+interface IRawlistItem {
 	id: number
 	name: string
 	ext: string
@@ -11,23 +12,37 @@ export interface IRawlistItem {
 	created_time: string
 	updated_time: string
 }
-export interface IlistItem {
+// 数据列表
+interface IlistItem {
 	type: string
 	name: string
 	data: string
 	created_time: string
 	checked: boolean
+	id?: number
 }
-export interface IselectE {
+// 选择
+interface IselectE {
 	index: number
 	value: boolean
 }
-export interface IactionItem {
+// 顶部更多菜单操作块
+interface IactionItem {
 	text: string
 	icon: string
 }
-export interface IaddItem {
+// 顶部加号菜单的操作块
+interface IaddItem {
 	text: string
 	icon: string
 	color: string
 }
+// dirs的类型
+
+interface IDirs {
+	id: number
+	name: string
+}
+type Ifunction = () => {}
+
+export { IselectE, IactionItem, IaddItem, IlistItem, IRawlistItem, IDirs, Ifunction }

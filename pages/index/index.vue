@@ -3,7 +3,16 @@
 		<!-- 顶部导航 -->
 		<navBar v-if="checkedCount === 0">
 			<template #left>
-				<text class="font-md ml-3">首页</text>
+				<view
+					style="width: 44rpx;height: 44rpx;background-color: yellow;"
+					class="flex align-center justify-center bg-light rounded-circle ml-3"
+					hover-class="bg-hover-light-important "
+					@tap="handleBackTap"
+					v-if="currentFile"
+				>
+					<span class="iconfont icon-fanhui" style="font-size:10px ;"></span>
+				</view>
+				<text class="font-sm ml-2" style="line-height: 44rpx;">{{ currentFile ? currentFile.name : '首页' }}</text>
 			</template>
 			<template #right>
 				<view
@@ -18,7 +27,7 @@
 					class="flex align-center justify-center bg-light rounded-circle mr-3"
 					hover-class="bg-hover-light-important"
 				>
-					<span class="iconfont icon-gengduo" @click="handleOpenSortmune"></span>
+					<span class="iconfont icon-gengduo" @click="sortMuneRef.open()"></span>
 				</view>
 			</template>
 		</navBar>
@@ -35,7 +44,7 @@
 			</template>
 		</navBar>
 		<!-- 搜索框部分 -->
-		<searchBox></searchBox>
+		<searchBox @handleSearch="handleSearchEmits" @handleFlashList="getListData()"></searchBox>
 		<!-- 列表 -->
 		<fileList
 			v-for="(item, index) in list"
@@ -126,20 +135,70 @@
 
 <script setup lang="ts">
 import { computed, ref, getCurrentInstance, Ref } from 'vue'
-import searchBox from './cpns/searchBox.vue'
-import { IselectE, IactionItem, IaddItem, IlistItem, IRawlistItem } from './type'
 import { useStore } from 'vuex'
-import { log } from 'console'
-const store = useStore()
+
+import searchBox from './cpns/searchBox.vue'
 import uniPopup from '@/uni_modules/uni-popup/components/uni-popup/uni-popup'
+
+import { IselectE, IactionItem, IaddItem, IlistItem, IRawlistItem, IDirs, Ifunction } from './type'
+
+// 上下文对象，发送请求对象，vuex站台对象
 const { appContext } = getCurrentInstance()
 const $T = appContext.config.globalProperties.$T
+const store = useStore()
 
-type Ifunction = () => {}
+const addMuneList: IaddItem[] = [
+	{ icon: 'icon-file-b-6', color: 'text-success', text: '上传图片' },
+	{ icon: 'icon-file-b-9', color: 'text-primary', text: '上传视频' },
+	{ icon: 'icon-file-b-8', color: 'text-muted', text: '上传文件' },
+	{ icon: 'icon-file-b-2', color: 'text-warning', text: '新建文件夹' }
+]
+const sortOptions = [{ name: '按名称排序', key: 'name' }, { name: '按时间排序', key: 'created_time' }]
 
-// 获取数据
-// 格式化数据
-const list: Ref<IlistItem[]> = ref([{ type: '', checked: false, data: '', checked_time: '', name: '' }])
+const rename = ref('')
+const newDirName = ref('')
+const sortIndex = ref(0)
+const deleteRef = ref(null)
+const renameRef = ref(null)
+const addMuneRef = ref(null)
+const sortMuneRef = ref(null)
+const newDirRef = ref(null)
+const dirs: Ref<Array<IDirs>> = ref([]) // 当前目录列表
+const list: Ref<Array<IlistItem>> = ref([{ type: '', checked: false, data: '', checked_time: '', name: '' }])
+
+const actions: Ref<Array<IactionItem>> = computed(() => {
+	if (checkedCount.value > 1) return [{ text: '下载', icon: 'icon-xiazai' }, { text: '删除', icon: 'icon-shanchu' }]
+	return [
+		{ text: '下载', icon: 'icon-xiazai' },
+		{ text: '分享', icon: 'icon-fenxiang-1' },
+		{ text: '删除', icon: 'icon-shanchu' },
+		{ text: '重命名', icon: 'icon-chongmingming' }
+	]
+})
+const currentFile = computed(
+	// 当前文件
+	(): number => {
+		let l = dirs.value.length
+		if (l === 0) {
+			return false
+		}
+		return dirs.value[l - 1]
+	}
+)
+const currenfFile_id = computed(
+	// 当前文件id
+	(): number => {
+		let l = dirs.value.length
+		if (l === 0) {
+			return 0
+		}
+		return dirs.value[l - 1].id
+	}
+)
+const checkedList = computed(() => list.value.filter(item => item.checked))
+const checkedCount = computed(() => checkedList.value.length)
+
+// 格式化列表数据
 const formatListDate = (rawListDate: Array<IRawlistItem>) => {
 	return rawListDate.map(item => {
 		let type
@@ -153,32 +212,27 @@ const formatListDate = (rawListDate: Array<IRawlistItem>) => {
 			checked: false,
 			name: item.name,
 			data: 'https://' + item.url,
-			created_time: item.created_time
+			created_time: item.created_time,
+			id: item.id
 		}
 	})
 }
+// 获取列表数据
 const getListData = () => {
-	$T.get('/file/list?file_id=0', { token: true }).then(res => (list.value = formatListDate(res.rows)))
+	let orderby = sortOptions[sortIndex.value].key as string
+	$T.get(`/file/list?file_id=${currenfFile_id.value}&orderby=${orderby}`, { token: true }).then(res => (list.value = formatListDate(res.rows)))
 }
-getListData()
-
+// 处理选择事件
 const handleSelect = (e: IselectE) => {
 	list.value[e.index].checked = e.value
 }
-// 选中
-const checkedList = computed(() => list.value.filter(item => item.checked))
-const checkedCount = computed(() => checkedList.value.length)
-//全选事件
+//处理全选事件
 const handleCheckAll = (state: boolean) => {
 	list.value.forEach(item => (item.checked = state))
 }
-
-//点击列表
+// 处理点击列表
 const handleClickListItem = (item: IlistItem) => {
 	switch (item.type) {
-		case 'dir':
-			console.log('dir')
-			break
 		case 'image':
 			if (typeof list.value != undefined) {
 				let images = list.value.filter(item => item.type === 'image')
@@ -193,40 +247,15 @@ const handleClickListItem = (item: IlistItem) => {
 			uni.navigateTo({
 				url: `/pages/video?videourl=${item.data}&title=${item.name}`
 			})
-			// uni.navigateTo({
-			// 	url: '/pages/video'
-			// })
-			break
-		case 'text':
-			console.log('text')
-			break
-		case 'none':
-			console.log('none')
 			break
 		default:
+			dirs.value.push({ id: item.id, name: item.name })
+			getListData()
+			uni.setStorage({ key: 'dirs', data: JSON.stringify(dirs.value) })
 			break
 	}
 }
-
-// 底部菜单相关
-const deleteRef = ref(null)
-const renameRef = ref(null)
-// const actions: Ref<Array<IactionItem>> = computed(() => {
-// 	if (checkedCount.value > 1) return [{ text: '下载', icon: 'icon-xiazai' }, { text: '删除', icon: 'icon-shanchu' }]
-// 	return [
-// 		{ text: '下载', icon: 'icon-xiazai' },
-// 		{ text: '分享', icon: 'icon-fenxiang-1' },
-// 		{ text: '删除', icon: 'icon-shanchu' },
-// 		{ text: '重命名', icon: 'icon-chongmingming' }
-// 	]
-// })
-const actions = [
-	{ text: '下载', icon: 'icon-xiazai' },
-	{ text: '分享', icon: 'icon-fenxiang-1' },
-	{ text: '删除', icon: 'icon-shanchu' },
-	{ text: '重命名', icon: 'icon-chongmingming' }
-]
-
+// 处理底部菜单点击事件
 const handleClickAction = (item: IactionItem) => {
 	switch (item.text) {
 		case '下载':
@@ -237,11 +266,19 @@ const handleClickAction = (item: IactionItem) => {
 			break
 		case '删除':
 			deleteRef.value.open((close: Ifunction) => {
-				list.value = list.value.filter(item => !item.checked)
+				let ids = checkedList.value.map(item => item.id).join(',')
+				uni.showLoading({ title: '删除中...', icon: 'loading' })
+				$T.post('/file/delete', { ids }, { token: true })
+					.then(res => {
+						getListData()
+						uni.showToast({
+							title: '删除成功',
+							icon: 'success'
+						})
+					})
+					.catch(err => {})
+				uni.hideLoading()
 				close()
-				uni.showToast({
-					title: '删除成功'
-				})
 			})
 			break
 		case '重命名':
@@ -258,23 +295,11 @@ const handleClickAction = (item: IactionItem) => {
 			break
 	}
 }
-const rename = ref('')
-
-//顶部菜单
-// 更多部分
-const addMuneRef = ref(null)
-const newDirRef = ref(null)
-const addMuneList: IaddItem[] = [
-	{ icon: 'icon-file-b-6', color: 'text-success', text: '上传图片' },
-	{ icon: 'icon-file-b-9', color: 'text-primary', text: '上传视频' },
-	{ icon: 'icon-file-b-8', color: 'text-muted', text: '上传文件' },
-	{ icon: 'icon-file-b-2', color: 'text-warning', text: '新建文件夹' }
-]
-const newDirName = ref('')
-
+// 顶部菜单之更多按钮菜单
 const handleOpenAddmune = () => {
 	addMuneRef.value.open()
 }
+// 顶部菜单之加号按钮菜单
 const handleClickAddMuneItem = (e: IaddItem) => {
 	addMuneRef.value.close()
 	switch (e.text) {
@@ -282,36 +307,48 @@ const handleClickAddMuneItem = (e: IaddItem) => {
 			newDirRef.value.open((close: Ifunction) => {
 				if (newDirName.value == '') {
 					close()
-					return uni.showToast({
+					uni.showToast({
 						title: '请输入新的文件夹名称',
 						icon: 'error'
 					})
+					return
 				}
-				list.value.push({
-					type: 'dir',
-					name: newDirName.value,
-					data: '',
-					create_time: '2023-03-12 12:11',
-					checked: false
+				$T.post('/file/mkdir', { file_id: currenfFile_id.value, name: newDirName.value }, { token: true }).then(res => {
+					getListData()
+					newDirName.value = ''
+					uni.showToast({
+						title: '新增成功',
+						icon: 'success'
+					})
 				})
 				newDirName.value = ''
-				uni.showToast({
-					title: '新增成功'
-				})
 				close()
 			})
 	}
 }
-// 排序部分
-const sortMuneRef = ref(null)
-const sortIndex = ref(0)
-const sortOptions = [{ name: '按名称排序' }, { name: '按时间排序' }]
-const handleOpenSortmune = () => {
-	sortMuneRef.value.open()
+// 返回上一个目录
+const handleBackTap = () => {
+	dirs.value.pop()
+	getListData()
+	uni.setStorage({ key: 'dirs', data: JSON.stringify(dirs.value) })
 }
+// 处理排序切换事件
 const handleChangeSort = (index: number) => {
 	sortIndex.value = index
+	getListData()
 	sortMuneRef.value.close()
+}
+// 搜索框事件
+const handleSearchEmits = (e: string) => {
+	console.log(e)
+	$T.get('/file/search?keyword=' + e, { token: true }).then(res => (list.value = formatListDate(res)))
+}
+
+// 生命周期直接执行的函数
+getListData() // 获取数据
+if (uni.getStorageSync('dirs')) {
+	// 初始化当前目录
+	dirs.value = JSON.parse(uni.getStorageSync('dirs'))
 }
 </script>
 
