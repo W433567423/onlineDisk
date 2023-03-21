@@ -141,7 +141,7 @@ import searchBox from './cpns/searchBox.vue'
 import uniPopup from '@/uni_modules/uni-popup/components/uni-popup/uni-popup'
 import { genID } from '@/utils'
 
-import { IselectE, IactionItem, IaddItem, IlistItem, IRawlistItem, IDirs } from './type'
+import { IselectE, IactionItem, IaddItem, IlistItem, IRawlistItem, IDirs, ITempFile, ITempVideo } from './type'
 
 // 上下文对象，发送请求对象，vuex站台对象
 const { appContext } = getCurrentInstance()
@@ -214,7 +214,8 @@ const formatListDate = (rawListDate: Array<IRawlistItem>) => {
 			name: item.name,
 			data: 'https://' + item.url,
 			created_time: item.created_time,
-			id: item.id
+			id: item.id,
+			size: item.size
 		}
 	})
 }
@@ -262,7 +263,7 @@ const handleClickListItem = (item: IlistItem) => {
 const handleClickAction = (item: IactionItem) => {
 	switch (item.text) {
 		case '下载':
-			console.log('下载ssss')
+			downLoadFiles()
 			break
 		case '分享':
 			console.log('分享')
@@ -308,11 +309,26 @@ const handleClickAddMuneItem = (e: IaddItem) => {
 			uni.chooseImage({
 				count: 9,
 				success: res => {
-					res.tempFiles.forEach(item => {
+					res.tempFiles.forEach((item: ITempFile) => {
 						uploadFile(item, 'image')
 					})
 				}
 			})
+			break
+		case '上传视频':
+			uni.chooseVideo({
+				count: 1,
+				success: (res: ITempVideo) => {
+					let name = ''
+					let size = 0
+					// #ifndef H5
+					name = res.tempFilePath.substring(res.tempFilePath.lastIndexOf('/') + 1)
+					size = res.size
+					// #endif
+					uploadFile({ path: res.tempFilePath, name, size }, 'video')
+				}
+			})
+
 			break
 		case '新建文件夹':
 			newDirRef.value.open((close: Ifunction) => {
@@ -358,8 +374,7 @@ const handleSearchEmits = (e: string) => {
 	$T.get('/file/search?keyword=' + e, { token: true }).then(res => (list.value = formatListDate(res)))
 }
 
-const uploadFile = (file, type) => {
-	let t = type
+const uploadFile = (file: ITempFile, type: string) => {
 	const key = genID(8)
 	let name = file.name
 	if (!name) {
@@ -367,7 +382,7 @@ const uploadFile = (file, type) => {
 	}
 	let obj = {
 		name,
-		type: t,
+		type,
 		size: file.size,
 		key,
 		progress: 0,
@@ -395,6 +410,37 @@ const uploadFile = (file, type) => {
 		console.log(res)
 		getListData()
 	})
+}
+const downLoadFiles = () => {
+	checkedList.value.forEach((item: IlistItem) => {
+		if (item.type !== 'dir') {
+			const key = genID(8)
+			const fileObj = { name: item.name, type: item.type, size: item.size, key, process: 0, status: true, created_time: new Date().getTime() }
+			//创建下载任务
+			store.dispatch('fileModule/createDownloadTask', fileObj)
+			let d = uni.downloadFile({
+				url: item.data,
+				success: res => {
+					if (res.statusCode === 200) {
+						console.log('xiazaichenggong', res)
+						// #ifndef H5
+						uni.saveFile({
+							tempFilePath: res.tempFilePath
+						}).then(res => console.log(res))
+						// #endif
+					}
+				}
+			})
+			d.onProgressUpdate(res => {
+				store.dispatch('fileModule/updateDownLoadProgress', { progress: res.progress, status: true, key })
+			})
+		}
+	})
+	uni.showToast({
+		title: '已加入下载列表',
+		icon: 'none'
+	})
+	handleCheckAll(false)
 }
 // 生命周期直接执行的函数
 getListData() // 获取数据

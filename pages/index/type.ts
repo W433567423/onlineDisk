@@ -20,6 +20,7 @@ interface IlistItem {
 	created_time: string
 	checked: boolean
 	id?: number
+	size?: number
 }
 // 选择
 interface IselectE {
@@ -42,12 +43,22 @@ interface IDirs {
 	id: number
 	name: string
 }
-// 上传的临时文件的类型
+// 上传的临时图片的类型
 interface ITempFile {
 	path: string
 	size: number
+	name?: string
 }
-// 上传对象的类型
+// 上传的临时视频的类型
+interface ITempVideo {
+	errMsg: string
+	tempFilePath: string
+	size: number
+	duration: number
+	width: number
+	height: number
+}
+// 上传下载对象的类型
 interface IFileObj {
 	name?: string
 	type?: string
@@ -55,6 +66,7 @@ interface IFileObj {
 	key: string
 	process: number
 	status: boolean
+	created_time?: number
 }
 
-export { IselectE, IactionItem, IaddItem, IlistItem, IRawlistItem, IDirs, ITempFile, IFileObj }
+export { IselectE, IactionItem, IaddItem, IlistItem, IRawlistItem, IDirs, ITempFile, ITempVideo, IFileObj }
