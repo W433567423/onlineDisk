@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { IlistItem } from '@/pages/index/type'
-
+import { IIcon } from './type'
 const props = withDefaults(
 	defineProps<{
 		item: IlistItem
@@ -33,10 +33,6 @@ const props = withDefaults(
 	{ isShowSelect: true }
 )
 // 图标处理
-interface IIcon {
-	icon: string
-	color: string
-}
 const icons = {
 	dir: {
 		icon: 'icon-file-b-2',

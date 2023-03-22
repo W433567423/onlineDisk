@@ -64,7 +64,7 @@ interface IFileObj {
 	type?: string
 	size?: number
 	key: string
-	process: number
+	progress: number
 	status: boolean
 	created_time?: number
 }

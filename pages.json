@@ -8,8 +8,7 @@
 				}
 			}
 		}, {
-			"path": "pages/index/index",
-			"style": {}
+			"path": "pages/index/index"
 		}, {
 			"path": "pages/list/list",
 			"style": {
@@ -22,7 +21,8 @@
 							"float": "right",
 							"fontSize": "22px",
 							"fontSrc": "/static/iconfont.ttf",
-							"text": "\ue64a"
+							"text": "\ue64a",
+							"onclick": "clickthing"
 						}]
 					}
 				}

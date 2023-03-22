@@ -2,6 +2,8 @@
 import { useStore } from 'vuex'
 // 初始化用户信息
 useStore().dispatch('userModule/initUser')
+//初始化传输列表
+useStore().dispatch('fileModule/initTransmitTask')
 </script>
 
 <style lang="less">

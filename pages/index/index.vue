@@ -247,7 +247,6 @@ const handleClickListItem = (item: IlistItem) => {
 			}
 			break
 		case 'video':
-			console.log(`/page/video?videourl=${item.data}`)
 			uni.navigateTo({
 				url: `/pages/video?videourl=${item.data}&title=${item.name}`
 			})
@@ -370,7 +369,6 @@ const handleChangeSort = (index: number) => {
 }
 // 搜索框事件
 const handleSearchEmits = (e: string) => {
-	console.log(e)
 	$T.get('/file/search?keyword=' + e, { token: true }).then(res => (list.value = formatListDate(res)))
 }
 
@@ -398,7 +396,6 @@ const uploadFile = (file: ITempFile, type: string) => {
 			filePath: file.path
 		},
 		p => {
-			console.log(p)
 			// 更新上传任务进度
 			store.dispatch('fileModule/updateUploadProgress', {
 				status: true,
@@ -407,7 +404,6 @@ const uploadFile = (file: ITempFile, type: string) => {
 			})
 		}
 	).then(res => {
-		console.log(res)
 		getListData()
 	})
 }
@@ -422,11 +418,10 @@ const downLoadFiles = () => {
 				url: item.data,
 				success: res => {
 					if (res.statusCode === 200) {
-						console.log('xiazaichenggong', res)
 						// #ifndef H5
 						uni.saveFile({
 							tempFilePath: res.tempFilePath
-						}).then(res => console.log(res))
+						})
 						// #endif
 					}
 				}

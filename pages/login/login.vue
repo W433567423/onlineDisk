@@ -63,7 +63,6 @@ const handleSubmit = () => {
 		})
 		if (status.value === 'login') {
 			store.dispatch('userModule/Userlogin', res).then(() => {
-				console.log(res)
 				uni.switchTab({
 					url: '/pages/index/index'
 				})

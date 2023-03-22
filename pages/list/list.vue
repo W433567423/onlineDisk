@@ -10,26 +10,14 @@
 				:key="index"
 			>
 				<text>{{ item.name }}</text>
-				<span class=" rounded" style="width: 30rpx;height: 8rpx;" :class="tarbarIndex == index ? 'bg-main' : 'bg-white'"></span>
+				<span class="rounded" style="width: 30rpx;height: 8rpx;" :class="tarbarIndex == index ? 'bg-main' : 'bg-white'"></span>
 			</view>
 		</view>
 		<swiper :duration="200" class="flex-1 flex" :current="tarbarIndex" @change="handleChangeTarbar($event.detail.current)">
-			<swiper-item class="flex-1" v-for="(item, index) in tarbarOptions" :key="index">
+			<swiper-item class="flex-1" v-for="index in [...Array(2).keys()]" :key="index">
 				<scroll-view scroll-y="true" class="flex-1 " style="height:100%">
-					<view style="height: 60rpx;" class="bg-light flex align-center font-sm px-2 text-muted">文件下载至:storage/xxxx/xxxx</view>
-					<view class="p-2 border-bottom border-light-secondary font-sm text-muted">下载中({{ downloading.length }})</view>
-					<fileList :item="item" :index="index" v-for="(item, index) in downloading" :key="index">
-						<view style="width: 70rpx;" class="flex align-center">
-							<span class="iconfont icon-zanting text-main"></span>
-							<text class="ml-1 font-smaller">{{ item.download }}%</text>
-						</view>
-
-						<template #bottom>
-							<progress :percent="item.download" active-color="#009cff" :stroke-width="4" />
-						</template>
-					</fileList>
-					<view class="p-2 border-bottom border-light-secondary font-sm text-muted">下载完成</view>
-					<fileList :item="item" :index="index" v-for="(item, index) in downloaded" :key="index" :isShowSelect="false"></fileList>
+					<transmitList v-if="index === 0" :index="index" :transmitTasks="downloadTasks"></transmitList>
+					<transmitList v-else :index="index" :transmitTasks="uploadTasks"></transmitList>
 				</scroll-view>
 			</swiper-item>
 		</swiper>
@@ -38,25 +26,51 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-// 导航
+import { useStore } from 'vuex'
+import { onNavigationBarButtonTap } from '@dcloudio/uni-app'
+import $time from '@/utils/time'
+
+import transmitList from './cpns/transmitList'
+import { ITask } from '@/store/type'
+import { IFileObj } from '@/pages/index/type'
+const store = useStore()
+
 const tarbarIndex = ref(0)
 const tarbarOptions = ref([{ name: '下载列表' }, { name: '上传列表' }])
+const uploadTasks = computed(
+	(): Array<ITask> =>
+		store.state.fileModule.uploadTasks.map((item: IFileObj) => {
+			item.created_time = $time.gettime(item.created_time)
+			return item
+		})
+)
+const downloadTasks = computed(
+	(): Array<ITask> =>
+		store.state.fileModule.downloadTasks.map((item: IFileObj) => {
+			item.created_time = $time.gettime(item.created_time)
+			return item
+		})
+)
+
+//切换下载/上传
 const handleChangeTarbar = (index: number) => {
 	tarbarIndex.value = index
 }
 
-//处理列表
-let list = ref([
-	{ type: 'image', name: '风景.jpg', data: '/static/logo.png', create_time: '2023-03-11 12:37', download: 35 },
-	{ type: 'video', name: '小视频.mp4', data: '/static/210710122716702150.mp4', create_time: '2023-03-11 12:37', download: 7 },
-	{ type: 'image', name: '风景.jpg', data: '/static/logo.png', create_time: '2023-03-11 12:37', download: 100 },
-	{ type: 'text', name: '记事本.txt', data: '', create_time: '2023-03-11 12:37', download: 80 },
-	{ type: 'image', name: '风景.jpg', data: '/static/logo.png', create_time: '2023-03-11 12:37', download: 64 },
-	{ type: 'none', name: '压缩包.zip', data: '', create_time: '2023-03-11 12:37', download: 96 },
-	{ type: 'image', name: '风景.jpg', data: '/static/logo.png', create_time: '2023-03-11 12:37', download: 100 }
-])
-const downloading = computed(() => list.value.filter(item => item.download < 100))
-const downloaded = computed(() => list.value.filter(item => item.download === 100))
+onNavigationBarButtonTap(() => {
+	uni.showModal({
+		content: '是否要清除所有记录?',
+		success: res => {
+			if (res.confirm) {
+				store.dispatch('fileModule/clearTransmitTasks')
+				uni.showToast({
+					title: '清除成功!',
+					icon: 'success'
+				})
+			}
+		}
+	})
+})
 </script>
 
 <style lang="less" scoped></style>
