@@ -263,9 +263,11 @@ const handleClickAction = (item: IactionItem) => {
 	switch (item.text) {
 		case '下载':
 			downLoadFiles()
+			handleCheckAll(false)
 			break
 		case '分享':
-			console.log('分享')
+			share()
+			handleCheckAll(false)
 			break
 		case '删除':
 			deleteRef.value.open((close: Ifunction) => {
@@ -372,6 +374,7 @@ const handleSearchEmits = (e: string) => {
 	$T.get('/file/search?keyword=' + e, { token: true }).then(res => (list.value = formatListDate(res)))
 }
 
+// 上传/下载/分享
 const uploadFile = (file: ITempFile, type: string) => {
 	const key = genID(8)
 	let name = file.name
@@ -435,8 +438,31 @@ const downLoadFiles = () => {
 		title: '已加入下载列表',
 		icon: 'none'
 	})
-	handleCheckAll(false)
 }
+const share = () => {
+	$T.post('/share/create', { file_id: checkedList.value[0].id }, { token: true }).then(res => {
+		uni.showModal({
+			content: res,
+			showCancel: false,
+			success: result => {
+				// #ifndef H5
+				if (result.confirm) {
+					uni.setClipboardData({
+						data: res,
+						success: () => {
+							uni.showToast({
+								title: '复制成功',
+								icon: 'success'
+							})
+						}
+					})
+				}
+				// #endif
+			}
+		})
+	})
+}
+
 // 生命周期直接执行的函数
 getListData() // 获取数据
 if (uni.getStorageSync('dirs')) {

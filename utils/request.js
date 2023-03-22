@@ -3,23 +3,23 @@ export default {
 	// 全局配置
 	common: {
 		baseUrl: "https://aod.wtututu.top",
-		header: {
-			'Content-Type': 'application/json;charset=UTF-8',
-		},
 		data: {},
 		method: 'GET',
-		dataType: 'json',
-		token: false
+		dataType: 'json'
 	},
 	// 请求 返回promise
 	request(options = {}) {
 		// 组织参数
 		options.url = this.common.baseUrl + options.url
-		options.header = options.header || this.common.header
+		options.header = options.header || {
+			'Content-Type': 'application/json;charset=UTF-8',
+		}
 		options.data = options.data || this.common.data
 		options.method = options.method || this.common.method
 		options.dataType = options.dataType || this.common.dataType
-		options.token = options.token === true ? true : this.common.token
+
+		options.token = options.token === true ? true : false
+
 
 		// 请求
 		return new Promise((res, rej) => {
@@ -42,7 +42,6 @@ export default {
 				// 往header头中添加token 
 				options.header.token = token
 			}
-
 
 			// 请求中...
 			uni.request({
